@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:12 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/03 01:25:18 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/03 19:09:36 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,14 @@
 #  define BUFFER_SIZE 42
 # endif
 
+// NOTE: this string is not necessarily valid i.e. not necessarily nul-terminated
+typedef char *	string;
+
 char	*get_next_line(int fd);
 
-char	*gnl_strjoin(char *s1, char *s2);
-char	*gnl_strchr(const char *s, int c);
-size_t	gnl_strlen(const char *s);
+void	gnl_strjoin(string *p_s1, string s2);
+char	*gnl_strchr(char *s, int c);
+size_t	gnl_strlen(char *s);
 size_t	gnl_strlcpy(char *dest, char *src, size_t size);
 char	*gnl_substr(char *s, unsigned int start, size_t len);
 

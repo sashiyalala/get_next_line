@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:15 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/03 01:27:13 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/03 20:13:21 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,92 +17,96 @@ size_t	gnl_strlcpy(char *dest, char *src, size_t size);
 static char	*gnl_strdup(char *str)
 {
 	size_t	len;
-	char	*out;
+	char	*res;
 
 	len = gnl_strlen((char *)str) + 1;
-	out = malloc(len * sizeof(char));
-	if (!out)
+	res = malloc(len * sizeof(char));
+	if (!res)
 		return (NULL);
-	gnl_strlcpy(out, str, len + 1);
-	free (str);
-	return (out);
+	gnl_strlcpy(res, str, len + 1);
+	return (res);
 }
 
-char	*gnl_strchr(const char *s, int c)
+char	*gnl_strchr(char *s, int c)
 {
-	char	*ptr;
+	char	*str2;
 
 	if (!s)
 		return (0);
-	ptr = (char *) s;
-	while (*ptr)
-	{
-		if (*ptr == c)
-			return (ptr);
-		ptr++;
-	}
-	if (*ptr == c)
-		return (ptr);
-	return (NULL);
+	if (c < 0 || c > 255)
+		return ((char *)s);
+	str2 = (char *)s;
+	while (*str2 != c && *str2)
+		str2++;
+	if (*str2 == c)
+		return (str2);
+	return (0);
 }
 
 size_t	gnl_strlcpy(char *dest, char *src, size_t size)
 {
 	size_t	i;
+	size_t	len;
 
-	if (size)
+	len = gnl_strlen((char *)src);
+	i = 0;
+	if (size == 0)
+		return (len);
+	while (src[i] && i < size - 1)
 	{
-		i = 0;
-		while (src[i] && (i < size - 1))
-		{
-			dest[i] = src[i];
-			i++;
-		}
-		dest[i] = 0;
+		dest[i] = src[i];
+		i++;
 	}
-	return (gnl_strlen(src));
+	if (i < size)
+		dest[i] = '\0';
+	return (len);
 }
 
-char	*gnl_strjoin(char *s1, char *s2)
+// cambia el contenido de s1 por un string nuevo que es s1+s2
+// Si en algun momento falla algo, el string s1 no se toca y ya
+void	gnl_strjoin(string *p_s1, string s2)
 {
-	char	*res;
+	string	res;
 	size_t	len1;
 	size_t	len2;
 
-	if (!s1 && !s2)
-		return (gnl_strdup(""));
-	if (s1 && !s2)
-		return (gnl_strdup(s1));
-	if (!s1 && s2)
-		return (gnl_strdup(s2));
-	len1 = gnl_strlen(s1);
+	// if (!s1 && !s2)
+	// 	return (gnl_strdup(""));
+	// if (s1 && !s2)
+	// 	return (gnl_strdup(s1));
+	// if (!s1 && s2)
+	// 	return (gnl_strdup(s2));
+	if (!p_s1 || !(*p_s1) || !s2)
+		return ;
+	len1 = gnl_strlen(*p_s1);
 	len2 = gnl_strlen(s2);
 	res = malloc((len1 + len2 + 1) * sizeof(char));
 	if (!res)
-		return (0);
-	gnl_strlcpy(res, s1, len1 + 1); // copy from the beggining of res, all s1
-	// free(s1);  // This frees the memory in the line pointer received by arg
+		return ;
+	gnl_strlcpy(res, *p_s1, len1 + 1); // copy from the beggining of res, all s1
+	free(*p_s1);  // This frees the memory in the line pointer received by arg
 	// with the return value, we're not replacing the memory address of line
 	// to the result of joining these 2 strings together
 	gnl_strlcpy(res + len1, s2, len2 + 1);  // starting at the end of the s1 in res, copy all of s2
-	return (res);
+	*p_s1 = res;
 }
 
 char	*gnl_substr(char *s, unsigned int start, size_t len)
 {
 	char	*res;
-	size_t	len_snstart;
+	size_t	s_len;
 
+	s_len = gnl_strlen(s);
 	if (!s)
 		return (NULL);
-	if (start >= gnl_strlen(s))
+	if (start >= s_len)
 		return (gnl_strdup(""));
-	len_snstart = gnl_strlen(s + start);
-	if (len > len_snstart)
-		len = len_snstart;
+	if (len > s_len - start)
+		return (gnl_strdup(s + start));
 	res = malloc((len + 1) * sizeof(char));
 	if (!res)
 		return (NULL);
-	gnl_strlcpy(res, s + start, len + 1);
+	gnl_strlcpy(res, s + start, len);
+	res[len] = '\0';
 	return (res);
 }
