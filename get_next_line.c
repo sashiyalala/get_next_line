@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/03 21:38:49 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/03 23:31:48 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,26 @@ static void	move_remainder_to_buffer(string *p_line, string buffer)
 
 static void	read_until_newline_in_buffer(int fd, string *p_line, string buffer)
 {
-	ssize_t	read_len; // we use ssize_t to allow for negative numbers, as read can be <0
+	ssize_t	read_bytes; // we use ssize_t to allow for negative numbers, as read can be <0
 	string	composed_line;
 
 	composed_line = malloc(1 * sizeof(char));
 	if (!composed_line)
+	{
+		free(*p_line);
+		*p_line = NULL;
 		return ;
+	}
 	composed_line[0] = '\0';
-	read_len = BUFFER_SIZE;
+	gnl_strjoin(&composed_line, *p_line);
+	read_bytes = 1;  // whatever positive value to start loop
 	// while there is no newline in buffer and we've been able to read as many
 	// bytes as we want
-	while (!(gnl_strchr(buffer, '\n')) && read_len == BUFFER_SIZE)
+	while (!(gnl_strchr(composed_line, '\n')) && read_bytes > 0)
 	{
 		// continue to read, and document how many bytes you've been able 2 read
-		read_len = read(fd, buffer, BUFFER_SIZE);
-		if ((read_len < 0)|| (read_len == 0 && !composed_line[0]))
+		read_bytes = read(fd, buffer, BUFFER_SIZE);  // try to read
+		if ((read_bytes < 0) || (read_bytes == 0 && !composed_line))
 		{
 			// Cuando falla la lectura o encuentro final de archivo, tienes que
 			// devolver NULL en gnl (x el enunciado)
@@ -71,7 +76,14 @@ static void	read_until_newline_in_buffer(int fd, string *p_line, string buffer)
 			*p_line = NULL;
 			return ;
 		}
-		buffer[read_len] = '\0'; // convert the buffer to a "valid string"
+		if (read_bytes == 0 && composed_line[0] == '\0')
+		{
+			free(composed_line);
+			free(*p_line);
+			*p_line = NULL;
+			return ;
+		}
+		buffer[read_bytes] = '\0'; // convert the buffer to a "valid string"
 		gnl_strjoin(&composed_line, buffer);
 	}
 	free(*p_line);
@@ -93,21 +105,10 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line[0] = '\0';
 	if (buffer[0] != '\0') // i.e. buffer contains some "remainder" from reading the line before
-	{
 		gnl_strjoin(&line, buffer);
-		if (!gnl_strchr(buffer, '\n'))  //&& (gnl_strchr(buffer, '\0') == (buffer + BUFFER_SIZE)))
-		{
-			read_until_newline_in_buffer(fd, &line, buffer);
-			if (!line)
-				return (0);
-		}
-	}
-	else  // cuando aun no hay nada en el buffer
-	{
-		read_until_newline_in_buffer(fd, &line, buffer);
-		if (!line)
-			return (0);
-	}
+	read_until_newline_in_buffer(fd, &line, buffer);
+	if (!line)
+		return (0);
 	move_remainder_to_buffer(&line, buffer);
 	return (line);
 }
