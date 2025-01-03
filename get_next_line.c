@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/03 20:13:02 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/03 21:38:49 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static void	move_remainder_to_buffer(string *p_line, string buffer)
 	if (line[line_len] == '\n') // si he parado por encontrarme un salto de linea, añade uno mas a la len
 		line_len++;
 	remainder_len = (gnl_strlen(line) - line_len);
-	if (remainder_len != '\0') //i.e. if there is some remainder (i.e. len not 0)
+	if (remainder_len != 0) //i.e. if there is some remainder (i.e. len not 0)
 		gnl_strlcpy(buffer, line + line_len, remainder_len + 1); // copy the contents of line, starting right after the \n, onto buffer
 	else
 		buffer[0] = '\0';
@@ -93,10 +93,21 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line[0] = '\0';
 	if (buffer[0] != '\0') // i.e. buffer contains some "remainder" from reading the line before
+	{
 		gnl_strjoin(&line, buffer);
-	read_until_newline_in_buffer(fd, &line, buffer);
-	if (!line)
-		return (0);
+		if (!gnl_strchr(buffer, '\n'))  //&& (gnl_strchr(buffer, '\0') == (buffer + BUFFER_SIZE)))
+		{
+			read_until_newline_in_buffer(fd, &line, buffer);
+			if (!line)
+				return (0);
+		}
+	}
+	else  // cuando aun no hay nada en el buffer
+	{
+		read_until_newline_in_buffer(fd, &line, buffer);
+		if (!line)
+			return (0);
+	}
 	move_remainder_to_buffer(&line, buffer);
 	return (line);
 }
