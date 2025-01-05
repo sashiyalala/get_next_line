@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:15 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/03 20:13:21 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/05 15:57:41 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,16 @@ size_t	gnl_strlcpy(char *dest, char *src, size_t size)
 	return (len);
 }
 
-// cambia el contenido de s1 por un string nuevo que es s1+s2
-// Si en algun momento falla algo, el string s1 no se toca y ya
+// Exchange the contents of the string s1(passed by ref) to s1+s2.
+// If anything goes wrong, just don't touch s1
+// DETAILS: we do free(*p_s1) to liberate the memory in the line pointer
+// received by arg, to make the ref to line point to a different string now
 void	gnl_strjoin(string *p_s1, string s2)
 {
 	string	res;
 	size_t	len1;
 	size_t	len2;
 
-	// if (!s1 && !s2)
-	// 	return (gnl_strdup(""));
-	// if (s1 && !s2)
-	// 	return (gnl_strdup(s1));
-	// if (!s1 && s2)
-	// 	return (gnl_strdup(s2));
 	if (!p_s1 || !(*p_s1) || !s2)
 		return ;
 	len1 = gnl_strlen(*p_s1);
@@ -83,11 +79,9 @@ void	gnl_strjoin(string *p_s1, string s2)
 	res = malloc((len1 + len2 + 1) * sizeof(char));
 	if (!res)
 		return ;
-	gnl_strlcpy(res, *p_s1, len1 + 1); // copy from the beggining of res, all s1
-	free(*p_s1);  // This frees the memory in the line pointer received by arg
-	// with the return value, we're not replacing the memory address of line
-	// to the result of joining these 2 strings together
-	gnl_strlcpy(res + len1, s2, len2 + 1);  // starting at the end of the s1 in res, copy all of s2
+	gnl_strlcpy(res, *p_s1, len1 + 1);
+	free(*p_s1);
+	gnl_strlcpy(res + len1, s2, len2 + 1);
 	*p_s1 = res;
 }
 
