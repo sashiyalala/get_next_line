@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/05 15:51:21 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/05 15:53:07 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,12 +108,11 @@ static void	read_until_newline_in_buffer(int fd, string *p_line, string buffer)
 //   line => put its contents in line
 char	*get_next_line(int fd)
 {
-	char	*line;
+	char		*line;
 	static char	buffer[BUFFER_SIZE + 1];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
-
 	line = malloc(1 * sizeof(char));
 	if (!line)
 		return (NULL);
