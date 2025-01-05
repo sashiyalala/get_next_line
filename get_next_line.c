@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/03 23:38:48 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/05 11:33:28 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ char	*get_next_line(int fd)
 	char	*line;
 	static char	buffer[BUFFER_SIZE + 1];
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
 
 	line = malloc(1 * sizeof(char));
