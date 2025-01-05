@@ -6,13 +6,13 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/05 15:53:07 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/05 16:00:30 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	gnl_strlen(char *s)
+size_t	gnl_strlen(string s)
 {
 	size_t	len;
 
@@ -106,9 +106,9 @@ static void	read_until_newline_in_buffer(int fd, string *p_line, string buffer)
 //   to something
 // * if the buffer contains stuff, i.e. a remainder from reading a previous
 //   line => put its contents in line
-char	*get_next_line(int fd)
+string	get_next_line(int fd)
 {
-	char		*line;
+	string		line;
 	static char	buffer[BUFFER_SIZE + 1];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)

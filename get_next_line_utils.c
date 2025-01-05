@@ -6,20 +6,20 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:15 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/05 15:57:41 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/05 16:05:31 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	gnl_strlcpy(char *dest, char *src, size_t size);
+size_t	gnl_strlcpy(string dest, string src, size_t size);
 
-static char	*gnl_strdup(char *str)
+static string	gnl_strdup(string str)
 {
 	size_t	len;
-	char	*res;
+	string	res;
 
-	len = gnl_strlen((char *)str) + 1;
+	len = gnl_strlen(str) + 1;
 	res = malloc(len * sizeof(char));
 	if (!res)
 		return (NULL);
@@ -27,15 +27,15 @@ static char	*gnl_strdup(char *str)
 	return (res);
 }
 
-char	*gnl_strchr(char *s, int c)
+string	gnl_strchr(string s, int c)
 {
-	char	*str2;
+	string	str2;
 
 	if (!s)
 		return (0);
 	if (c < 0 || c > 255)
-		return ((char *)s);
-	str2 = (char *)s;
+		return ((string) s);
+	str2 = (string) s;
 	while (*str2 != c && *str2)
 		str2++;
 	if (*str2 == c)
@@ -43,12 +43,12 @@ char	*gnl_strchr(char *s, int c)
 	return (0);
 }
 
-size_t	gnl_strlcpy(char *dest, char *src, size_t size)
+size_t	gnl_strlcpy(string dest, string src, size_t size)
 {
 	size_t	i;
 	size_t	len;
 
-	len = gnl_strlen((char *)src);
+	len = gnl_strlen((string) src);
 	i = 0;
 	if (size == 0)
 		return (len);
@@ -85,9 +85,9 @@ void	gnl_strjoin(string *p_s1, string s2)
 	*p_s1 = res;
 }
 
-char	*gnl_substr(char *s, unsigned int start, size_t len)
+string	gnl_substr(string s, unsigned int start, size_t len)
 {
-	char	*res;
+	string	res;
 	size_t	s_len;
 
 	s_len = gnl_strlen(s);
