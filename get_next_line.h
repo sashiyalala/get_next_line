@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:12 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/05 16:04:38 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/08 11:41:50 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@
 
 // NOTE: this string is not necessarily valid i.e. not necessarily
 // nul-terminated
-typedef char *	string;
+typedef char *	t_string;
 
-string	get_next_line(int fd);
+t_string	get_next_line(int fd);
 // TODO: Change all char * in declarations to "string"
-void	gnl_strjoin(string *p_s1, string s2);
-string	gnl_strchr(string s, int c);
-size_t	gnl_strlen(string s);
-size_t	gnl_strlcpy(string dest, string src, size_t size);
-string	gnl_substr(string s, unsigned int start, size_t len);
+void		gnl_strjoin(t_string *p_s1, t_string s2);
+t_string	gnl_strchr(t_string s, int c);
+size_t		gnl_strlen(t_string s);
+size_t		gnl_strlcpy(t_string dest, t_string src, size_t size);
+t_string	gnl_substr(t_string s, unsigned int start, size_t len);
 
 #endif

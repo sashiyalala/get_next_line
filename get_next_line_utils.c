@@ -6,18 +6,18 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:15 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/05 16:05:31 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/08 11:41:34 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	gnl_strlcpy(string dest, string src, size_t size);
+size_t	gnl_strlcpy(t_string dest, t_string src, size_t size);
 
-static string	gnl_strdup(string str)
+static t_string	gnl_strdup(t_string str)
 {
-	size_t	len;
-	string	res;
+	size_t		len;
+	t_string	res;
 
 	len = gnl_strlen(str) + 1;
 	res = malloc(len * sizeof(char));
@@ -27,15 +27,15 @@ static string	gnl_strdup(string str)
 	return (res);
 }
 
-string	gnl_strchr(string s, int c)
+t_string	gnl_strchr(t_string s, int c)
 {
-	string	str2;
+	t_string	str2;
 
 	if (!s)
 		return (0);
 	if (c < 0 || c > 255)
-		return ((string) s);
-	str2 = (string) s;
+		return ((t_string) s);
+	str2 = (t_string) s;
 	while (*str2 != c && *str2)
 		str2++;
 	if (*str2 == c)
@@ -43,12 +43,12 @@ string	gnl_strchr(string s, int c)
 	return (0);
 }
 
-size_t	gnl_strlcpy(string dest, string src, size_t size)
+size_t	gnl_strlcpy(t_string dest, t_string src, size_t size)
 {
 	size_t	i;
 	size_t	len;
 
-	len = gnl_strlen((string) src);
+	len = gnl_strlen((t_string) src);
 	i = 0;
 	if (size == 0)
 		return (len);
@@ -66,11 +66,11 @@ size_t	gnl_strlcpy(string dest, string src, size_t size)
 // If anything goes wrong, just don't touch s1
 // DETAILS: we do free(*p_s1) to liberate the memory in the line pointer
 // received by arg, to make the ref to line point to a different string now
-void	gnl_strjoin(string *p_s1, string s2)
+void	gnl_strjoin(t_string *p_s1, t_string s2)
 {
-	string	res;
-	size_t	len1;
-	size_t	len2;
+	t_string	res;
+	size_t		len1;
+	size_t		len2;
 
 	if (!p_s1 || !(*p_s1) || !s2)
 		return ;
@@ -85,10 +85,10 @@ void	gnl_strjoin(string *p_s1, string s2)
 	*p_s1 = res;
 }
 
-string	gnl_substr(string s, unsigned int start, size_t len)
+t_string	gnl_substr(t_string s, unsigned int start, size_t len)
 {
-	string	res;
-	size_t	s_len;
+	t_string	res;
+	size_t		s_len;
 
 	s_len = gnl_strlen(s);
 	if (!s)
