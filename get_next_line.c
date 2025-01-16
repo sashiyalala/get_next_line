@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/08 11:41:01 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/16 21:14:55 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,14 @@ static void	move_remainder_to_buffer(t_string *p_line, t_string buffer)
 	*p_line = line;
 }
 
+static void	free_line_pointers(t_string composed_line, t_string *p_line)
+{
+	if (composed_line != NULL)
+		free(composed_line);
+	free(*p_line);
+	*p_line = NULL;
+}
+
 // Read chunks of size BUFFER_SIZE until you find and end of line, i.e.:
 // \n, EOF or there is an error during reading.
 // Every chunk you read is appended to composed_line and when
@@ -70,11 +78,7 @@ static void	read_until_eol_in_buffer(int fd, t_string *p_line, t_string buffer)
 
 	composed_line = malloc(1 * sizeof(char));
 	if (!composed_line)
-	{
-		free(*p_line);
-		*p_line = NULL;
-		return ;
-	}
+		return (free_line_pointers(composed_line, p_line));
 	composed_line[0] = '\0';
 	gnl_strjoin(&composed_line, *p_line);
 	read_bytes = 1;
@@ -82,19 +86,9 @@ static void	read_until_eol_in_buffer(int fd, t_string *p_line, t_string buffer)
 	{
 		read_bytes = read(fd, buffer, BUFFER_SIZE);
 		if ((read_bytes < 0) || (read_bytes == 0 && !composed_line))
-		{
-			free(composed_line);
-			free(*p_line);
-			*p_line = NULL;
-			return ;
-		}
+			return (free_line_pointers(composed_line, p_line));
 		if (read_bytes == 0 && composed_line[0] == '\0')
-		{
-			free(composed_line);
-			free(*p_line);
-			*p_line = NULL;
-			return ;
-		}
+			return (free_line_pointers(composed_line, p_line));
 		buffer[read_bytes] = '\0';
 		gnl_strjoin(&composed_line, buffer);
 	}
