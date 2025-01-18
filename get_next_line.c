@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/16 21:14:55 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/18 18:15:14 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,11 @@ static void	move_remainder_to_buffer(t_string *p_line, t_string buffer)
 	*p_line = line;
 }
 
+// Given the two dynamically allocated t_strings, free their memory
+// * composed_lined passed by value, only free if it's not pointing
+//	 NULL already
+// * p_line, a pointer to the gnl variable "line", free its contents, i.e.
+//   the line.
 static void	free_line_pointers(t_string composed_line, t_string *p_line)
 {
 	if (composed_line != NULL)
@@ -61,16 +66,16 @@ static void	free_line_pointers(t_string composed_line, t_string *p_line)
 	*p_line = NULL;
 }
 
-// Read chunks of size BUFFER_SIZE until you find and end of line, i.e.:
+// Read chunks of size BUFFER_SIZE until you find an end of line, i.e.:
 // \n, EOF or there is an error during reading.
 // Every chunk you read is appended to composed_line and when
 // you've stopped reading, put that composed_line into line (passed by ref).
 // E.g., at the end, results will be sth like this:
 // *p_line = "En un lugar de la mancha, de cuyo nombre\nno quiero\nacordarme\n"
 // buffer  = "nombre\nno quiero\nacordarme"
-// NOTE: The buffer will be a "valid" string, i.e. nul-terminated
-// NOTE: We use type `ssize_t` for read_bytes to allow for negative numbers
-// which would mean the read failed
+// * The buffer will be a "valid" string, i.e. nul-terminated
+// * We use type `ssize_t` for read_bytes to allow for negative numbers
+//   which would mean the read failed
 static void	read_until_eol_in_buffer(int fd, t_string *p_line, t_string buffer)
 {
 	ssize_t		read_bytes;
