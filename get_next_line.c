@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/18 18:15:14 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/18 18:17:36 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ static void	read_until_eol_in_buffer(int fd, t_string *p_line, t_string buffer)
 			return (free_line_pointers(composed_line, p_line));
 		buffer[read_bytes] = '\0';
 		gnl_strjoin(&composed_line, buffer);
+		if (!composed_line)  // not sure if necessary
+			return (free_line_pointers(composed_line, p_line));
 	}
 	free(*p_line);
 	*p_line = composed_line;
