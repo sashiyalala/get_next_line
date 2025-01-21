@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:12 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/08 11:41:50 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/21 21:01:03 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <unistd.h>
 // malloc, free
 # include <stdlib.h>
+// FD_SETSIZE macro i.e. maximum concurrent file descriptors
+# include <sys/select.h>
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
@@ -26,12 +28,11 @@
 // nul-terminated
 typedef char *	t_string;
 
-t_string	get_next_line(int fd);
-// TODO: Change all char * in declarations to "string"
-void		gnl_strjoin(t_string *p_s1, t_string s2);
-t_string	gnl_strchr(t_string s, int c);
-size_t		gnl_strlen(t_string s);
-size_t		gnl_strlcpy(t_string dest, t_string src, size_t size);
-t_string	gnl_substr(t_string s, unsigned int start, size_t len);
+char *		get_next_line(int fd);
+void		ft_bzero(void	*p, size_t n);
+size_t		ft_strlen(t_string s);
+t_string	ft_strchr(const t_string str, int c);
+t_string	ft_strjoin(t_string s1, t_string s2);
+// void		*ft_calloc(size_t nmemb, size_t size);
 
 #endif

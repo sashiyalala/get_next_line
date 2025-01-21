@@ -6,99 +6,114 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/18 18:15:14 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/21 21:04:50 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	gnl_strlen(t_string s)
+// Given the stockpile, remove everything that is supposed to have gone to the
+// resulting line, i.e. everything until a newline or EOF is found
+static void	remove_line_from_stockpile(t_string *stockpile)
 {
-	size_t	len;
+	t_string	p_nl;
+	t_string	temp;
+	size_t		iter_temp;
+	size_t		iter_pile;
 
-	len = 0;
-	while (s[len])
-		len++;
-	return (len);
+	p_nl = ft_strchr(*stockpile, '\n');
+	if (!p_nl)
+	{
+		free(*stockpile);
+		*stockpile = NULL;
+		return ;
+	}
+	temp = (char *) malloc((ft_strlen(p_nl)) * sizeof(char));
+	iter_temp = 0;
+	iter_pile = ft_strlen(*stockpile) - ft_strlen(p_nl) + 1;
+	while (iter_pile < ft_strlen(*stockpile))
+		temp[iter_temp++] = (*stockpile)[iter_pile++];
+	temp[iter_temp] = '\0';
+	free(*stockpile);
+	*stockpile = temp;
+	if (**stockpile == 0)
+	{
+		free(*stockpile);
+		*stockpile = NULL;
+	}
 }
 
-// Given a line(by reference), trim everything after the first \n and overwrite
-// the contents of buffer with the remainder
-// E.g.,
-// *p_line = "En un lugar de la mancha, de cuyo nombre\nno quiero\nacordarme\n"
-// -->     = "En un lugar de la mancha, de cuyo nombre\n"
-// buffer  = "nombre\nno quiero\nacordarme"
-// -->     = "no quiero\nacordarme"
-// OBS: as we only mean to pass a static variable as buffer, the original
-// buffer still gets overwritten even though you are not passing it by ref.
-static void	move_remainder_to_buffer(t_string *p_line, t_string buffer)
+// Allocate memory and create a new line by copying everything from a given
+// stockpile until the first '\n' is found
+t_string	get_line_from_stockpile(t_string *stockpile)
 {
-	ssize_t		remainder_len;
-	size_t		line_len;
+	t_string	p_nl;
+	size_t		len;
+	size_t		i;
 	t_string	line;
 
-	line = *p_line;
-	line_len = 0;
-	while (line[line_len] != '\n' && line[line_len])
-		line_len++;
-	if (line[line_len] == '\n')
-		line_len++;
-	remainder_len = (gnl_strlen(line) - line_len);
-	if (remainder_len != 0)
-		gnl_strlcpy(buffer, line + line_len, remainder_len + 1);
-	else
-		buffer[0] = '\0';
-	line = gnl_substr(line, 0, line_len + 1);
-	free(*p_line);
-	*p_line = line;
+	p_nl = ft_strchr(*stockpile, '\n');
+	len = ft_strlen(*stockpile) - ft_strlen(p_nl) + 2;
+	line = (char *) malloc(len * sizeof(char));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (i < len - 1)
+	{
+		line[i] = (*stockpile)[i];
+		++i;
+	}
+	line[i] = '\0';
+	return (line);
 }
 
-// Given the two dynamically allocated t_strings, free their memory
-// * composed_lined passed by value, only free if it's not pointing
-//	 NULL already
-// * p_line, a pointer to the gnl variable "line", free its contents, i.e.
-//   the line.
-static void	free_line_pointers(t_string composed_line, t_string *p_line)
+// Encapsulation of the process for attempting to read, at max, a length of
+// BUFFER_SIZE bytes and concat'ng it at the end of the given stockpile.
+// In particular, manage possible errors during call to unistd::read
+ssize_t	read_to_buffer(int fd, t_string *stockpile, t_string *buffer)
 {
-	if (composed_line != NULL)
-		free(composed_line);
-	free(*p_line);
-	*p_line = NULL;
+	char	*temp;
+	ssize_t	read_bytes;
+
+	ft_bzero(buffer, BUFFER_SIZE + 1);
+	read_bytes = read(fd, buffer, BUFFER_SIZE);
+	if (read_bytes < 0 || !buffer)
+	{
+		free(*stockpile);
+		*stockpile = NULL;
+		return (-1);
+	}
+	if (read_bytes == 0)
+			return (read_bytes);
+	temp = ft_strjoin(*stockpile, *buffer);
+	free(*stockpile);
+	*stockpile = temp;
+	return (read_bytes);
 }
 
-// Read chunks of size BUFFER_SIZE until you find an end of line, i.e.:
-// \n, EOF or there is an error during reading.
-// Every chunk you read is appended to composed_line and when
-// you've stopped reading, put that composed_line into line (passed by ref).
-// E.g., at the end, results will be sth like this:
-// *p_line = "En un lugar de la mancha, de cuyo nombre\nno quiero\nacordarme\n"
-// buffer  = "nombre\nno quiero\nacordarme"
-// * The buffer will be a "valid" string, i.e. nul-terminated
-// * We use type `ssize_t` for read_bytes to allow for negative numbers
-//   which would mean the read failed
-static void	read_until_eol_in_buffer(int fd, t_string *p_line, t_string buffer)
+// Attempt to fill out a stockpile string by reading, at max, a length of
+// BUFFER_SIZE into buffer variable until a '\n' or EOF is found
+static t_string	read_nl(int fd, t_string *stockpile)
 {
 	ssize_t		read_bytes;
-	t_string	composed_line;
+	t_string	line;
+	t_string	buffer;
 
-	composed_line = malloc(1 * sizeof(char));
-	if (!composed_line)
-		return (free_line_pointers(composed_line, p_line));
-	composed_line[0] = '\0';
-	gnl_strjoin(&composed_line, *p_line);
+	// TODO: Consider allocating buffer here?
+	buffer = (char *) malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
 	read_bytes = 1;
-	while (!(gnl_strchr(composed_line, '\n')) && read_bytes > 0)
-	{
-		read_bytes = read(fd, buffer, BUFFER_SIZE);
-		if ((read_bytes < 0) || (read_bytes == 0 && !composed_line))
-			return (free_line_pointers(composed_line, p_line));
-		if (read_bytes == 0 && composed_line[0] == '\0')
-			return (free_line_pointers(composed_line, p_line));
-		buffer[read_bytes] = '\0';
-		gnl_strjoin(&composed_line, buffer);
-	}
-	free(*p_line);
-	*p_line = composed_line;
+	while (!(ft_strchr(*stockpile, '\n')) && read_bytes > 0)
+		read_bytes = read_to_buffer(fd, stockpile, &buffer);
+	if (read_bytes < 0)
+		return (NULL);
+	free(buffer);  // Re. TODO^
+	if (ft_strlen(*stockpile) == 0)
+		return (NULL);
+	line = get_line_from_stockpile(stockpile);
+	remove_line_from_stockpile(stockpile);
+	return (line);
 }
 
 // * Some initial checks
@@ -106,22 +121,13 @@ static void	read_until_eol_in_buffer(int fd, t_string *p_line, t_string buffer)
 //   to something
 // * if the buffer contains stuff, i.e. a remainder from reading a previous
 //   line => put its contents in line
-t_string	get_next_line(int fd)
+char *	get_next_line(int fd)
 {
-	t_string	line;
-	static char	buffer[BUFFER_SIZE + 1];
+	static t_string	stockpile;  // line I will paste everything on
+	t_string		line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
-	line = malloc(1 * sizeof(char));
-	if (!line)
+	if (fd < 0 || fd >= FD_SETSIZE || BUFFER_SIZE <= 0)
 		return (NULL);
-	line[0] = '\0';
-	if (buffer[0] != '\0')
-		gnl_strjoin(&line, buffer);
-	read_until_eol_in_buffer(fd, &line, buffer);
-	if (!line)
-		return (0);
-	move_remainder_to_buffer(&line, buffer);
+	line = read_nl(fd, &stockpile);
 	return (line);
 }
