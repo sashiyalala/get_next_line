@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/22 18:48:15 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/22 19:39:52 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,3 +125,86 @@ char	*get_next_line(int fd)
 	move_remainder_to_buffer(&line, buffer);
 	return (line);
 }
+
+// #include "get_next_line.h"
+// #include <fcntl.h>
+// #include <stdio.h>
+// #include <unistd.h>
+
+// int main()
+// {
+	// {
+	// 	int fd = open("read_test.txt", O_RDONLY);
+	// 	char *line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+	// }
+
+	// {
+	// 	t_string	name = "read_error_alt.txt";
+	// 	int 		fd = open(name, O_RDONLY);
+	// 	t_string	line;
+
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+
+	// 	close(fd);
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+
+	// 	fd = 345;
+	// 	line = get_next_line(fd);
+	// 	printf("%s", line);
+	// 	free(line);
+	// }
+
+	// {
+	// 		t_string	name = "quijote.txt";
+	// 		int 		fd = open(name, O_RDONLY);
+	// 		t_string	line;
+
+	// 		// Read an entire file
+	// 		while ((line = get_next_line(fd)) != NULL)
+	// 		{
+	// 			printf("%s", line);
+	// 			free(line);
+	// 		}
+	// 		printf("the end :)");
+
+	// 		// read a single one
+	// 		// line = get_next_line(fd);
+	// 		// printf("%s", line);
+	// }
+
+	// STDIN
+	// {
+	// 	int fd;
+	// 	char *line;
+	// 	fd = fileno(stdin);
+
+	// 	while ((line = get_next_line(fd)) != NULL)
+	// 	{
+	// 		printf("%s", line);
+	// 		free(line);
+
+	// 	}
+	// 	return (0);
+	// }
+// }
