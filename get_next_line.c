@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:18 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/18 18:15:14 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/22 18:48:15 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ static void	read_until_eol_in_buffer(int fd, t_string *p_line, t_string buffer)
 //   to something
 // * if the buffer contains stuff, i.e. a remainder from reading a previous
 //   line => put its contents in line
-t_string	get_next_line(int fd)
+char	*get_next_line(int fd)
 {
 	t_string	line;
 	static char	buffer[BUFFER_SIZE + 1];

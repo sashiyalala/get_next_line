@@ -6,7 +6,7 @@
 /*   By: facosta <facosta@student.42madrid.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 22:16:12 by facosta           #+#    #+#             */
-/*   Updated: 2025/01/08 11:41:50 by facosta          ###   ########.fr       */
+/*   Updated: 2025/01/22 18:47:55 by facosta          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@
 // nul-terminated
 typedef char *	t_string;
 
-t_string	get_next_line(int fd);
-// TODO: Change all char * in declarations to "string"
+char		*get_next_line(int fd);
 void		gnl_strjoin(t_string *p_s1, t_string s2);
 t_string	gnl_strchr(t_string s, int c);
 size_t		gnl_strlen(t_string s);
